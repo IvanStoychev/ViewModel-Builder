@@ -1,0 +1,12 @@
+        public {propertyType} {publicPropertyName}
+        {
+            get => {privatePropertyName};
+            set
+            {
+                if ({privatePropertyName} != value)
+                {
+                    {privatePropertyName} = value;
+                    OnPropertyChanged("{publicPropertyName}");
+                }
+            }
+        }

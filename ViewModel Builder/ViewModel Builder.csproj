@@ -14,13 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Private property template.txt">
+    <Content Include="Resources\Templates\Properties\Private property template.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Property changed template.txt">
+    <Content Include="Resources\Templates\Properties\Property changed template.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Public property template.txt">
+    <Content Include="Resources\Templates\Properties\Public property template.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -11,20 +11,23 @@ namespace ViewModel_Builder
 {
     class MainWindowDataContext : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Amount of properties to generate.
+        /// </summary>
         public int PropertiesCount
         {
             get => PropertyViewsCollection.Count;
             set
             {
                 if (PropertyViewsCollection.Count != value)
-                {
-                    AdjustPropertiesCount(value);
-                }
+                    PopulatePropertiesControls(value);
             }
         }
 
-        public ObservableCollection<PropertyView> PropertyViewsCollection { get; }
-        
+        /// <summary>
+        /// Holds all the PropertyViews on the MainWindow.
+        /// </summary>
+        public ObservableCollection<PropertyView> PropertyViewsCollection { get; }        
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         public RelayCommand AddPropertyCommand { get; }
@@ -34,31 +37,40 @@ namespace ViewModel_Builder
         public MainWindowDataContext()
         {
             PropertyViewsCollection = new ObservableCollection<PropertyView>();
-            AddPropertyCommand = new RelayCommand(OnAddProperty);
-            RemovePropertyCommand = new RelayCommand(OnRemoveProperty);
-            ExecuteCommand = new RelayCommand(OnExecute);
+            AddPropertyCommand = new RelayCommand(AddProperty);
+            RemovePropertyCommand = new RelayCommand(RemoveProperty);
+            ExecuteCommand = new RelayCommand(GenerateViewModelText);
         }
 
-        void OnAddProperty()
+        /// <summary>
+        /// Adds a new PropertyView to the PropertyViewsCollection.
+        /// </summary>
+        void AddProperty()
         {
             PropertyViewsCollection.Add(new PropertyView());
             OnPropertyChanged("PropertiesCount");
         }
 
-        void OnRemoveProperty()
+        /// <summary>
+        /// Removes the last PropertyView from the PropertyViewsCollection.
+        /// </summary>
+        void RemoveProperty()
         {
             PropertyViewsCollection.RemoveAt(PropertyViewsCollection.Count - 1);
             OnPropertyChanged("PropertiesCount");
         }
 
-        private void OnExecute()
+        /// <summary>
+        /// Generates a set of properties and event handler for an MVVM viewmodel.
+        /// </summary>
+        private void GenerateViewModelText()
         {
             string propertyTypeMergeField = "{propertyType}";
             string privatePropertyNameMergeField = "{privatePropertyName}";
             string publicPropertyNameMergeField = "{publicPropertyName}";
-            string privatePropertyTemplate = File.ReadAllText("Private property template.txt");
-            string publicPropertyTemplate = File.ReadAllText("Public property template.txt");
-            string propertyChangedTemplate = File.ReadAllText("Property changed template.txt");
+            string privatePropertyTemplate = File.ReadAllText(@"Resources\Templates\Properties\Private property template.txt");
+            string publicPropertyTemplate = File.ReadAllText(@"Resources\Templates\Properties\Public property template.txt");
+            string propertyChangedTemplate = File.ReadAllText(@"Resources\Templates\Properties\Property changed template.txt");
             StringBuilder privatePropertiesSB = new StringBuilder();
             StringBuilder publicPropertiesSB = new StringBuilder();
 
@@ -78,24 +90,24 @@ namespace ViewModel_Builder
             ExportToNotepad(result);
         }
 
-        void AdjustPropertiesCount(int count)
+        /// <summary>
+        /// Creates the given amount of PropertyViews for property generation.
+        /// </summary>
+        /// <param name="count">The total number of PropertyViews that should exist.</param>
+        void PopulatePropertiesControls(int count)
         {
             int difference = count - PropertyViewsCollection.Count;
 
             if (difference > 0)
             {
                 for (int i = 0; i < difference; i++)
-                {
-                    OnAddProperty();
-                }
+                    AddProperty();
             }
             else
             {
                 difference = Math.Abs(difference);
                 for (int i = 0; i < difference; i++)
-                {
-                    OnRemoveProperty();
-                }
+                    RemoveProperty();
             }
         }
 
@@ -105,6 +117,10 @@ namespace ViewModel_Builder
         [DllImport("User32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int uMsg, int wParam, string lParam);
 
+        /// <summary>
+        /// Opens notepad.exe and send the given text to it.
+        /// </summary>
+        /// <param name="text">The text to send to notepad.exe.</param>
         void ExportToNotepad(string text)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo("notepad");
