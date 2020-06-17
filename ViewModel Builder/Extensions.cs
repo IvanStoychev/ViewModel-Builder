@@ -2,6 +2,9 @@
 
 namespace ViewModel_Builder
 {
+    /// <summary>
+    /// Contains all custom extension methods for this project.
+    /// </summary>
     static class Extensions
     {
         /// <summary>
