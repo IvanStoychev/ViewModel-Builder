@@ -99,16 +99,11 @@ namespace ViewModel_Builder
             int difference = count - PropertyViewsCollection.Count;
 
             if (difference > 0)
-            {
                 for (int i = 0; i < difference; i++)
                     AddProperty();
-            }
-            else
-            {
-                difference = Math.Abs(difference);
-                for (int i = 0; i < difference; i++)
+            else if (difference < 0)
+                for (int i = 0; i > difference; i--)
                     RemoveProperty();
-            }
         }
 
         [DllImport("user32.dll")]
