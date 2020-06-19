@@ -1,4 +1,5 @@
 ﻿using Frontend;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +12,8 @@ namespace ViewModel_Builder
 {
     class MainWindowDataContext : INotifyPropertyChanged
     {
+        IConfigurationRoot configuration;
+
         /// <summary>
         /// Amount of properties to generate.
         /// </summary>
@@ -40,6 +43,12 @@ namespace ViewModel_Builder
             AddPropertyCommand = new RelayCommand(AddProperty);
             RemovePropertyCommand = new RelayCommand(RemoveProperty);
             ExecuteCommand = new RelayCommand(GenerateViewModelText);
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+
+            configuration = builder.Build();
         }
 
         /// <summary>
@@ -65,12 +74,15 @@ namespace ViewModel_Builder
         /// </summary>
         private void GenerateViewModelText()
         {
-            string propertyTypeMergeField = "{propertyType}";
-            string privatePropertyNameMergeField = "{privatePropertyName}";
-            string publicPropertyNameMergeField = "{publicPropertyName}";
-            string privatePropertyTemplate = File.ReadAllText(@"Resources\Templates\Properties\Private property template.txt");
-            string publicPropertyTemplate = File.ReadAllText(@"Resources\Templates\Properties\Public property template.txt");
-            string propertyChangedTemplate = File.ReadAllText(@"Resources\Templates\Properties\Property changed template.txt");
+            string propertyTypeMergeField = configuration["PropertyTypeMergeField"];
+            string privatePropertyNameMergeField = configuration["PrivatePropertyNameMergeField"];
+            string publicPropertyNameMergeField = configuration["PublicPropertyNameMergeField"];
+            string privatePropertyTemplateFilepath = configuration["PrivatePropertyTemplate"];
+            string publicPropertyTemplateFilepath = configuration["PublicPropertyTemplate"];
+            string propertyChangedTemplateFilepath = configuration["PropertyChangedTemplate"];
+            string privatePropertyTemplate = File.ReadAllText(privatePropertyTemplateFilepath);
+            string publicPropertyTemplate = File.ReadAllText(publicPropertyTemplateFilepath);
+            string propertyChangedTemplate = File.ReadAllText(propertyChangedTemplateFilepath);
             StringBuilder privatePropertiesSB = new StringBuilder();
             StringBuilder publicPropertiesSB = new StringBuilder();
 
