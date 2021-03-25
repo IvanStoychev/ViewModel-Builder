@@ -41,7 +41,7 @@ namespace Frontend
 
         public MainWindowDataContext()
         {
-            PropertyTypes = new List<string>() { "bool", "byte", "sbyte", "char", "decimal", "double", "float", "int", "uint", "long", "ulong", "short", "ushort" };
+            PropertyTypes = new List<string>() { "bool", "byte", "char", "decimal", "double", "float", "int", "long", "sbyte", "short", "string", "uint", "ulong", "ushort", "List<T>", "RelayCommand" };
             AddPropertyControlsCollection = new ObservableCollection<AddPropertyControl>();
             AddPropertyCommand = new RelayCommand(OnAddProperty);
             RemovePropertyCommand = new RelayCommand(OnRemoveProperty);

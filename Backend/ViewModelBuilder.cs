@@ -9,8 +9,17 @@ using ViewModel_Builder.Utility;
 
 namespace Backend
 {
+    /// <summary>
+    /// Builds the contents of the view model from given data.
+    /// </summary>
     public static class ViewModelBuilder
     {
+        /// <summary>
+        /// Replaces merge fields in property templates, defined in the appsettings file, to construct the code of the view model.
+        /// Then opens a Notepad and send it there.
+        /// </summary>
+        /// <param name="configuration">The configuration to take settings from.</param>
+        /// <param name="propertyNameAndTypeDict">A list of property names and their data types.</param>
         public static void GenerateViewModelText(IConfigurationRoot configuration, List<(string Name, string Type)> propertyNameAndTypeDict)
         {
             string propertyTypeMergeField = configuration["PropertyTypeMergeField"];
