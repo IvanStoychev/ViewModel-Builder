@@ -17,25 +17,19 @@ namespace Backend.Options
         TemplateCatalog() { }
 
         /// <summary>
-        /// Path to the file containing the template used for declaring fields.
+        /// Path to the file containing the template used for creating the viewmodel's class.
         /// </summary>
-        public string FieldDeclarationTemplatePath { get; set; }
-
-        /// <summary>
-        /// Path to the file containing the template used for declaring properties.
-        /// </summary>
-        public string PropertyDeclarationTemplatePath { get; set; }
-
-        /// <summary>
-        /// Path to the file containing the template used for the "OnPropertyChanged" method,
-        /// which is usually used to invoke the "PropertyChanged" event.
-        /// </summary>
-        public string PropertyChangedTemplatePath { get; set; }
+        public string ClassTemplatePath { get; set; }
 
         /// <summary>
         /// Path to the file containing the template used for creating the viewmodel's constructor.
         /// </summary>
         public string ConstructorTemplatePath { get; set; }
+
+        /// <summary>
+        /// Path to the file containing the template used for declaring fields.
+        /// </summary>
+        public string FieldDeclarationTemplatePath { get; set; }
 
         /// <summary>
         /// Path to the file containing the template used for declaring an "Execute" method for each ICommand property.
@@ -86,5 +80,16 @@ namespace Backend.Options
         /// Path to the file containing the template used for initializing a generic ICommand property with both an "Execute" and "CanExecute" methods.
         /// </summary>
         public string ICommandTActionFuncBoolInitializationTemplatePath { get; set; }
+
+        /// <summary>
+        /// Path to the file containing the template used for declaring properties.
+        /// </summary>
+        public string PropertyDeclarationTemplatePath { get; set; }
+
+        /// <summary>
+        /// Path to the file containing the template used for the "OnPropertyChanged" method,
+        /// which is usually used to invoke the "PropertyChanged" event.
+        /// </summary>
+        public string PropertyChangedTemplatePath { get; set; }
     }
 }
