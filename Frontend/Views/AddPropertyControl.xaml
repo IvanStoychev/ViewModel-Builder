@@ -11,8 +11,8 @@
             <RowDefinition MinHeight="20" Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="200" Width="0.5*"/>
-            <ColumnDefinition MinWidth="300" Width="*"/>
+            <ColumnDefinition MinWidth="100" Width="0.5*"/>
+            <ColumnDefinition MinWidth="200" Width="*"/>
         </Grid.ColumnDefinitions>
         <Label Content="Property type:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Label Content="Property name:" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0"/>
