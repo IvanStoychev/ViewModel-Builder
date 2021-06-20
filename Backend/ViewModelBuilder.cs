@@ -22,27 +22,14 @@ namespace Backend
         // In this case I prefer it this way.
         #region Templates
         /// <summary>
+        /// Template used for creating the ViewModel's class.
+        /// </summary>
+        static readonly string ClassTemplate = File.ReadAllText(TemplateCatalog.instance.ClassTemplatePath);
+
+        /// <summary>
         /// Template used for creating the ViewModel's constructor.
         /// </summary>
         static readonly string ConstructorTemplate = File.ReadAllText(TemplateCatalog.instance.ConstructorTemplatePath);
-
-        /// <summary>
-        /// Template used for creating a field declaration.
-        /// <code>ex. "string {FieldName};"</code>
-        /// </summary>
-        static readonly string FieldDeclarationTemplate = File.ReadAllText(TemplateCatalog.instance.FieldDeclarationTemplatePath);
-
-        /// <summary>
-        /// Template used for creating a property declaration.
-        /// <code>ex. "public string {PropName} { get => {FieldName}; set => {FieldName} = value; }"</code>
-        /// </summary>
-        static readonly string PropertyDeclarationTemplate = File.ReadAllText(TemplateCatalog.instance.PropertyDeclarationTemplatePath);
-
-        /// <summary>
-        /// Template used for the "OnPropertyChanged" method.
-        /// <code>ex. "void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(...);"</code>
-        /// </summary>
-        static readonly string PropertyChangedTemplate = File.ReadAllText(TemplateCatalog.instance.PropertyChangedTemplatePath);
 
         /// <summary>
         /// Template used to declare a property of the type, implementing the ICommand interface.
@@ -103,9 +90,33 @@ namespace Backend
         /// <code>ex. "bool Can{CommandName}({TypeParameter} obj)"</code>
         /// </summary>
         static readonly string CommandTCanExecDeclarationTemplate = File.ReadAllText(TemplateCatalog.instance.ICommandTCanExecuteTemplatePath);
+
+        /// <summary>
+        /// Template used for creating a field declaration.
+        /// <code>ex. "string {FieldName};"</code>
+        /// </summary>
+        static readonly string FieldDeclarationTemplate = File.ReadAllText(TemplateCatalog.instance.FieldDeclarationTemplatePath);
+
+        /// <summary>
+        /// Template used for creating a property declaration.
+        /// <code>ex. "public string {PropName} { get => {FieldName}; set => {FieldName} = value; }"</code>
+        /// </summary>
+        static readonly string PropertyDeclarationTemplate = File.ReadAllText(TemplateCatalog.instance.PropertyDeclarationTemplatePath);
+
+        /// <summary>
+        /// Template used for the "OnPropertyChanged" method.
+        /// <code>ex. "void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(...);"</code>
+        /// </summary>
+        static readonly string PropertyChangedTemplate = File.ReadAllText(TemplateCatalog.instance.PropertyChangedTemplatePath);
         #endregion Templates
 
         #region Merge fields
+        /// <summary>
+        /// Text to replace with a field's name.
+        /// <code>ex. "{FieldName}"</code>
+        /// </summary>
+        static readonly string FieldNameMergeField = MergeFieldCatalog.instance.FieldNameMergeField;
+
         /// <summary>
         /// Text to replace with a property's name.
         /// <code>ex. "{PropertyName}"</code>
@@ -119,10 +130,10 @@ namespace Backend
         static readonly string PropertyTypeMergeField = MergeFieldCatalog.instance.PropertyTypeMergeField;
 
         /// <summary>
-        /// Text to replace with a field's name.
-        /// <code>ex. "{FieldName}"</code>
+        /// Text to replace with a ViewModel's code.
+        /// <code>ex. "{ViewModelCode}"</code>
         /// </summary>
-        static readonly string FieldNameMergeField = MergeFieldCatalog.instance.FieldNameMergeField;
+        static readonly string ViewModelCodeMergeField = MergeFieldCatalog.instance.ViewModelCodeMergeField;
 
         /// <summary>
         /// Text to replace with a ViewModel's name.
@@ -159,6 +170,7 @@ namespace Backend
         /// <param name="viewModelName">What to name the ViewModel class.</param>
         public static void GenerateViewModelText(List<(string Name, string Type)> propertyNameAndTypeList, string viewModelName)
         {
+            TemplateSeamster.MergeFieldsAndValues[ViewModelCodeMergeField] = ViewModelCodeMergeField;
             TemplateSeamster.MergeFieldsAndValues[CommandImplementationTypeMergeField] = CommandImplementationType;
 
             // Regexes to capture the generic type.
@@ -175,8 +187,17 @@ namespace Backend
             StringBuilder iCommandInitialisationsSB = new();
             StringBuilder iCommandMethodsSB = new();
 
-            Regex removeViewModelEnd = new Regex("ViewModel$", RegexOptions.IgnoreCase);
-            viewModelName = removeViewModelEnd.Replace(viewModelName, string.Empty);
+            Regex regexEndsWithViewModel = new Regex("ViewModel$", RegexOptions.IgnoreCase);
+            Regex regexEndsWithView = new Regex("View$", RegexOptions.IgnoreCase);
+
+            if (!regexEndsWithViewModel.IsMatch(viewModelName))
+            {
+                if (regexEndsWithView.IsMatch(viewModelName))
+                    viewModelName += "Model";
+                else
+                    viewModelName += "ViewModel";
+            }
+
             viewModelName = viewModelName.FirstLetterToUpper();
             TemplateSeamster.MergeFieldsAndValues[ViewModelNameMergeField] = viewModelName;
 
@@ -275,17 +296,17 @@ namespace Backend
             string iCommandMethodsString = iCommandMethodsSB.ToString();
 
 
-            StringBuilder test = new();
-            test.AppendLine($"public class {viewModelName}ViewModel");
-            test.AppendLine("{");
+            StringBuilder result = new();
+            result.AppendLine($"public class {viewModelName}");
+            result.AppendLine("{");
             string temp = fieldDeclarationsString + propertyDeclarationsString + iCommandPropertyDeclarationsString + constructorString + iCommandMethodsString.TrimEnd(Environment.NewLine.ToCharArray());
-            test.AppendLine(temp);
-            test.AppendLine("}");
+            result.AppendLine(temp);
+            result.AppendLine("}");
 
-            string result = test.ToString();// fieldDeclarationsString + propertyDeclarationsString + iCommandPropertyDeclarationsString + constructorString + iCommandMethodsString;
-            result = result.TrimEnd(Environment.NewLine.ToCharArray());
+            //string result = result.ToString();// fieldDeclarationsString + propertyDeclarationsString + iCommandPropertyDeclarationsString + constructorString + iCommandMethodsString;
+            //result = result.TrimEnd(Environment.NewLine.ToCharArray());
 
-            Interop.ExportToNotepad(result);
+            //Interop.ExportToNotepad(result);
         }
 
         /// <summary>
