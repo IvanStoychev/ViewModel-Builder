@@ -1,4 +1,4 @@
-﻿public class {viewModelName}
+﻿public class {ViewModelName}
 {
 	{ViewModelCode}
 }
