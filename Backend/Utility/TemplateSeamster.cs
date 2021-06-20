@@ -14,16 +14,6 @@ namespace Backend.Utility
         /// </summary>
         internal static Dictionary<string, string> MergeFieldsAndValues = new();
 
-        static TemplateSeamster()
-        {
-            var allMergeFields = MergeFieldCatalog.instance.GetType().GetProperties(BindingFlags.Public);
-            
-            foreach (var mergeField in allMergeFields)
-            {
-                MergeFieldsAndValues.Add(mergeField.GetValue(MergeFieldCatalog.instance).ToString(), "");
-            }
-        }
-
         /// <summary>
         /// Returns the given <paramref name="template"/> with all merge fields replaced.
         /// </summary>
