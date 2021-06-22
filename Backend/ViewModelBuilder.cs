@@ -170,16 +170,11 @@ namespace Backend
         /// <param name="viewModelName">What to name the ViewModel class.</param>
         public static void GenerateViewModelText(List<(string Name, string Type)> propertyNameAndTypeList, string viewModelName)
         {
-            TemplateSeamster.MergeFieldsAndValues[ViewModelCodeMergeField] = ViewModelCodeMergeField;
             TemplateSeamster.MergeFieldsAndValues[CommandImplementationTypeMergeField] = CommandImplementationType;
 
             // Regexes to capture the generic type.
-            // For some reason Visual Studio does not recognize the "\(" escape sequence and throws a CS1009 error,
-            // which is why the escaping is handled the following way.
-            string escapedActionCommandRegex = Regex.Escape("(Action<T>)");
-            string escapedActionFuncCommandRegex = Regex.Escape("(Action<T>, Func<T, bool>)");
-            Regex genericActionCommandRegex = new Regex($"{CommandImplementationType}<(.*)>{escapedActionCommandRegex}", RegexOptions.Compiled);
-            Regex genericActionFuncCommandRegex = new Regex($"{CommandImplementationType}<(.*)>{escapedActionFuncCommandRegex}", RegexOptions.Compiled);
+            Regex genericActionCommandRegex = new Regex(@$"{CommandImplementationType}<(.*)>\(Action<T>\)", RegexOptions.Compiled);
+            Regex genericActionFuncCommandRegex = new Regex(@$"{CommandImplementationType}<(.*)>\(Action<T>, Func<T, bool>\)", RegexOptions.Compiled);
 
             StringBuilder fieldDeclarationsSB = new();
             StringBuilder propertyDeclarationsSB = new();
@@ -187,18 +182,7 @@ namespace Backend
             StringBuilder iCommandInitialisationsSB = new();
             StringBuilder iCommandMethodsSB = new();
 
-            Regex regexEndsWithViewModel = new Regex("ViewModel$", RegexOptions.IgnoreCase);
-            Regex regexEndsWithView = new Regex("View$", RegexOptions.IgnoreCase);
-
-            if (!regexEndsWithViewModel.IsMatch(viewModelName))
-            {
-                if (regexEndsWithView.IsMatch(viewModelName))
-                    viewModelName += "Model";
-                else
-                    viewModelName += "ViewModel";
-            }
-
-            viewModelName = viewModelName.FirstLetterToUpper();
+            viewModelName = ValidateViewModelName(viewModelName);
             TemplateSeamster.MergeFieldsAndValues[ViewModelNameMergeField] = viewModelName;
 
             foreach (var property in propertyNameAndTypeList)
@@ -223,8 +207,8 @@ namespace Backend
                         iCommandPropertiesSB.AppendLine(commandPropertyDeclarationText);
                         commandInitializationText = TemplateSeamster.PrepareTemplate(CommandActionInitTemplate);
                         commandExecuteMethodDeclaration = TemplateSeamster.PrepareTemplate(CommandExecDeclarationTemplate);
-                        iCommandMethodsSB.AppendLine(commandExecuteMethodDeclaration);
                         iCommandMethodsSB.AppendLine();
+                        iCommandMethodsSB.AppendLine(commandExecuteMethodDeclaration);
                     }
                     else if (propertyType == $"{CommandImplementationType}(Action, Func<bool>)")
                     {
@@ -232,11 +216,11 @@ namespace Backend
                         iCommandPropertiesSB.AppendLine(commandPropertyDeclarationText);
                         commandInitializationText = TemplateSeamster.PrepareTemplate(CommandActionFuncBoolInitTemplate);
                         commandExecuteMethodDeclaration = TemplateSeamster.PrepareTemplate(CommandExecDeclarationTemplate);
+                        iCommandMethodsSB.AppendLine();
                         iCommandMethodsSB.AppendLine(commandExecuteMethodDeclaration);
-                        iCommandMethodsSB.AppendLine();
                         commandCanExecuteMethodDeclaration = TemplateSeamster.PrepareTemplate(CommandCanExecDeclarationTemplate);
-                        iCommandMethodsSB.AppendLine(commandCanExecuteMethodDeclaration);
                         iCommandMethodsSB.AppendLine();
+                        iCommandMethodsSB.AppendLine(commandCanExecuteMethodDeclaration);
                     }
                     else if (genericActionCommandRegex.IsMatch(propertyType))
                     {
@@ -246,8 +230,8 @@ namespace Backend
                         iCommandPropertiesSB.AppendLine(commandPropertyDeclarationText);
                         commandInitializationText = TemplateSeamster.PrepareTemplate(CommandTActionInitTemplate);
                         commandExecuteMethodDeclaration = TemplateSeamster.PrepareTemplate(CommandTExecDeclarationTemplate);
-                        iCommandMethodsSB.AppendLine(commandExecuteMethodDeclaration);
                         iCommandMethodsSB.AppendLine();
+                        iCommandMethodsSB.AppendLine(commandExecuteMethodDeclaration);
                     }
                     else if (genericActionFuncCommandRegex.IsMatch(propertyType))
                     {
@@ -257,11 +241,11 @@ namespace Backend
                         iCommandPropertiesSB.AppendLine(commandPropertyDeclarationText);
                         commandInitializationText = TemplateSeamster.PrepareTemplate(CommandTActionFuncBoolInitTemplate);
                         commandExecuteMethodDeclaration = TemplateSeamster.PrepareTemplate(CommandTExecDeclarationTemplate);
+                        iCommandMethodsSB.AppendLine();
                         iCommandMethodsSB.AppendLine(commandExecuteMethodDeclaration);
-                        iCommandMethodsSB.AppendLine();
                         commandCanExecuteMethodDeclaration = TemplateSeamster.PrepareTemplate(CommandTCanExecDeclarationTemplate);
-                        iCommandMethodsSB.AppendLine(commandCanExecuteMethodDeclaration);
                         iCommandMethodsSB.AppendLine();
+                        iCommandMethodsSB.AppendLine(commandCanExecuteMethodDeclaration);
                     }
 
                     iCommandInitialisationsSB.AppendLine(commandInitializationText);
@@ -280,33 +264,24 @@ namespace Backend
                 }
             }
 
-            fieldDeclarationsSB.AppendLine();
             iCommandPropertiesSB.AppendLine();
             propertyDeclarationsSB.AppendLine(PropertyChangedTemplate);
-            propertyDeclarationsSB.AppendLine();
 
-            string iCommandInitialisationsString = iCommandInitialisationsSB.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+            string iCommandInitialisationsString = iCommandInitialisationsSB.ToString();
             string iCommandInitialisationsMergeField = MergeFieldCatalog.instance.ICommandInitializationsMergeField;
             TemplateSeamster.MergeFieldsAndValues[iCommandInitialisationsMergeField] = iCommandInitialisationsString;
-            string constructorString = TemplateSeamster.PrepareTemplate(ConstructorTemplate) + Environment.NewLine + Environment.NewLine;
+            string constructorString = TemplateSeamster.PrepareTemplate(ConstructorTemplate);
 
             string fieldDeclarationsString = fieldDeclarationsSB.ToString();
             string propertyDeclarationsString = propertyDeclarationsSB.ToString();
             string iCommandPropertyDeclarationsString = iCommandPropertiesSB.ToString();
             string iCommandMethodsString = iCommandMethodsSB.ToString();
+            string classCode = fieldDeclarationsString + propertyDeclarationsString + iCommandPropertyDeclarationsString + constructorString + iCommandMethodsString;
 
+            TemplateSeamster.MergeFieldsAndValues[ViewModelCodeMergeField] = classCode;
+            string result = TemplateSeamster.PrepareTemplate(ClassTemplate);
 
-            StringBuilder result = new();
-            result.AppendLine($"public class {viewModelName}");
-            result.AppendLine("{");
-            string temp = fieldDeclarationsString + propertyDeclarationsString + iCommandPropertyDeclarationsString + constructorString + iCommandMethodsString.TrimEnd(Environment.NewLine.ToCharArray());
-            result.AppendLine(temp);
-            result.AppendLine("}");
-
-            //string result = result.ToString();// fieldDeclarationsString + propertyDeclarationsString + iCommandPropertyDeclarationsString + constructorString + iCommandMethodsString;
-            //result = result.TrimEnd(Environment.NewLine.ToCharArray());
-
-            //Interop.ExportToNotepad(result);
+            Interop.ExportToNotepad(result);
         }
 
         /// <summary>
@@ -363,6 +338,26 @@ namespace Backend
             }
 
             GenerateViewModelText(propertyNameAndTypeList, viewModelName);
+        }
+
+        /// <summary>
+        /// Verifies if the given <paramref name="viewModelName"/> follows MVVM naming conventions and ends in "ViewModel"
+        /// and fixes it, if it doesn't.
+        /// </summary>
+        /// <param name="viewModelName">Name of a ViewModel class.</param>
+        /// <returns>The given <paramref name="viewModelName"/>, affixed with "ViewModel", if it wasn't already.</returns>
+        static string ValidateViewModelName(string viewModelName)
+        {
+            if (!viewModelName.EndsWith("ViewModel"))
+            {
+                if (viewModelName.EndsWith("View"))
+                    viewModelName += "Model";
+                else
+                    viewModelName += "ViewModel";
+            }
+
+            viewModelName = viewModelName.FirstLetterToUpper();
+            return viewModelName;
         }
     }
 }
