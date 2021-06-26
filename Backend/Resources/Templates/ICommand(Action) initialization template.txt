@@ -1,0 +1,1 @@
+            {ICommandName} = new {ICommandImplementationType}(On{ICommandName});

@@ -1,0 +1,12 @@
+        public {PropertyType} {PropertyName}
+        {
+            get => {FieldName};
+            set
+            {
+                if ({FieldName} != value)
+                {
+                    {FieldName} = value;
+                    OnPropertyChanged("{PropertyName}");
+                }
+            }
+        }

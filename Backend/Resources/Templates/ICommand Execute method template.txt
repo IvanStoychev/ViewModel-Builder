@@ -1,0 +1,4 @@
+        void On{ICommandName}()
+        {
+            throw new System.NotImplementedException();
+        }
