@@ -1,1 +1,1 @@
-            {ICommandName}Command = new {ICommandImplementationType}<{TypeParameter}>(On{ICommandName}, Can{ICommandName});
+            {ICommand name}Command = new {ICommand implementation type}<{Type parameter}>(On{ICommand name}, Can{ICommand name});

@@ -1,4 +1,4 @@
-        bool Can{ICommandName}({TypeParameter} obj)
+        bool Can{ICommand name}({Type parameter} obj)
         {
             throw new System.NotImplementedException();
         }

@@ -1,4 +1,4 @@
-        bool Can{ICommandName}()
+        bool Can{ICommand name}()
         {
             throw new System.NotImplementedException();
         }

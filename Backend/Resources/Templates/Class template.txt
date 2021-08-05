@@ -1,4 +1,14 @@
-﻿public class {ViewModelName}
+﻿public class {ViewModel name} : INotifyPropertyChanged
 {
-	{ViewModelCode}
+{ViewModel fields}
+
+{ViewModel properties}
+
+{OnChanged event handler}
+
+{ICommand declarations}
+
+{ViewModel constructor}
+
+{ICommand methods}
 }

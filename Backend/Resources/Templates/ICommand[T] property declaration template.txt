@@ -1,1 +1,1 @@
-        public {ICommandImplementationType}<{TypeParameter}> {ICommandName}Command { get; }
+        public {ICommand implementation type}<{Type parameter}> {ICommand name}Command { get; }

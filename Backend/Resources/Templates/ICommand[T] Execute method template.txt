@@ -1,4 +1,4 @@
-        void On{ICommandName}({TypeParameter} obj)
+        void On{ICommand name}({Type parameter} obj)
         {
             throw new System.NotImplementedException();
         }

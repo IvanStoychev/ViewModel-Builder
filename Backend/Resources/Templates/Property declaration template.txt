@@ -1,12 +1,12 @@
-        public {PropertyType} {PropertyName}
+        public {Property type} {Property name}
         {
-            get => {FieldName};
+            get => {Field name};
             set
             {
-                if ({FieldName} != value)
+                if ({Field name} != value)
                 {
-                    {FieldName} = value;
-                    OnPropertyChanged("{PropertyName}");
+                    {Field name} = value;
+                    OnPropertyChanged("{Property name}");
                 }
             }
         }

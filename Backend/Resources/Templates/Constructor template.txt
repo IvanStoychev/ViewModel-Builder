@@ -1,4 +1,4 @@
-        public {ViewModelName}()
+        public {ViewModel name}()
         {
-{ICommandInitializations}
+{ICommand initializations}
         }

@@ -1,1 +1,1 @@
-        {PropertyType} {FieldName};
+        {Property type} {Field name};
