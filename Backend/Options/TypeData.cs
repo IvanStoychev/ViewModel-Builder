@@ -19,7 +19,7 @@ namespace Backend.Options
         /// <summary>
         /// The data type used for the <see cref="ICommand"/> implementation.
         /// </summary>
-        public string ICommandImplementationType { get; set; }
+        public string ICommand_ImplementationType { get; set; }
 
         /// <summary>
         /// List of all data types the program can work with.
@@ -35,7 +35,7 @@ namespace Backend.Options
         {
             for (int i = 0; i < instance.PropertyTypes.Count; i++)
                 if (instance.PropertyTypes[i].StartsWith("ICommand"))
-                    instance.PropertyTypes[i] = instance.PropertyTypes[i].Replace("ICommand", instance.ICommandImplementationType);
+                    instance.PropertyTypes[i] = instance.PropertyTypes[i].Replace("ICommand", instance.ICommand_ImplementationType);
         }
     }
 }
