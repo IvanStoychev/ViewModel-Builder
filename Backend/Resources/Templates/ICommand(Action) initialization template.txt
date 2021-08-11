@@ -1,1 +1,1 @@
-            {ICommand name} = new {ICommand implementation type}(On{ICommand name});
+			{ICommand name} = new {ICommand implementation type}(On{ICommand name});

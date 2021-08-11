@@ -1,14 +1,19 @@
-﻿public class {ViewModel name} : INotifyPropertyChanged
+﻿using System.ComponentModel;
+
+namespace {NamespaceName}
 {
+    class {ViewModel name} : INotifyPropertyChanged
+    {
 {ViewModel fields}
 
 {ViewModel properties}
 
-{OnChanged event handler}
+{OnChanged EventHandler}
 
 {ICommand declarations}
 
 {ViewModel constructor}
 
 {ICommand methods}
+    }
 }
