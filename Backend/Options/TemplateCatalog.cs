@@ -17,9 +17,9 @@ namespace Backend.Options
         TemplateCatalog() { }
 
         /// <summary>
-        /// Path to the file containing the template used for creating the viewmodel's class.
+        /// Path to the file containing the template used for the code of the viewmodel's class.
         /// </summary>
-        public string Class_TemplatePath { get; set; }
+        public string Class_Code_TemplatePath { get; set; }
 
         /// <summary>
         /// Path to the file containing the template used for creating the viewmodel's constructor.
@@ -91,5 +91,10 @@ namespace Backend.Options
         /// which is usually used to invoke the "PropertyChanged" event.
         /// </summary>
         public string PropertyChanged_TemplatePath { get; set; }
+
+        /// <summary>
+        /// Path to the file containing the template used for the entire ViewModel file contents.
+        /// </summary>
+        public string ViewModel_Contents_TemplatePath { get; set; }
     }
 }

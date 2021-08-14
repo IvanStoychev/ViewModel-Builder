@@ -17,6 +17,12 @@ namespace Backend.Options
         MergeFieldCatalog() { }
 
         /// <summary>
+        /// Text to replace with the code of the ViewModel's class.
+        /// <code>Ex. "{Class code}"</code>
+        /// </summary>
+        public string Class_Code_MergeField { get; set; }
+
+        /// <summary>
         /// Text to replace with the ViewModel's constructor.
         /// <code>Ex. "{ViewModel constructor}"</code>
         /// </summary>

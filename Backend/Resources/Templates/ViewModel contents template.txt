@@ -1,0 +1,9 @@
+﻿using System.ComponentModel;
+
+namespace {NamespaceName}
+{
+    class {ViewModel name} : INotifyPropertyChanged
+    {
+{Class code}
+    }
+}

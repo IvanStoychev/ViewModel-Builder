@@ -23,7 +23,7 @@ namespace Backend
         /// <summary>
         /// Template used for creating the ViewModel's class.
         /// </summary>
-        static readonly string Class_Template = File.ReadAllText(TemplateCatalog.instance.Class_TemplatePath);
+        static readonly string Class_Code_Template = File.ReadAllText(TemplateCatalog.instance.Class_Code_TemplatePath);
 
         /// <summary>
         /// Template used for creating the ViewModel's constructor.
@@ -108,9 +108,20 @@ namespace Backend
         /// </summary>
         static readonly string PropertyChanged_Template = File.ReadAllText(TemplateCatalog.instance.PropertyChanged_TemplatePath);
 
+        /// <summary>
+        /// Template used for the entire ViewModel file contents.
+        /// </summary>
+        static readonly string ViewModel_Contents_Template = File.ReadAllText(TemplateCatalog.instance.ViewModel_Contents_TemplatePath);
+
         #endregion Templates
 
         #region Merge fields
+
+        /// <summary>
+        /// Text to replace with the code of the ViewModel's class.
+        /// <code>Ex. "{Class code}"</code>
+        /// </summary>
+        static readonly string Class_Code_MergeField = MergeFieldCatalog.instance.Class_Code_MergeField;
 
         /// <summary>
         /// Text to replace with the ViewModel's constructor.
@@ -167,16 +178,16 @@ namespace Backend
         static readonly string Property_Type_MergeField = MergeFieldCatalog.instance.Property_Type_MergeField;
 
         /// <summary>
-        /// Text to replace with a ViewModel's name.
-        /// <code>ex. "{ViewModelName}"</code>
-        /// </summary>
-        static readonly string ViewModel_Name_MergeField = MergeFieldCatalog.instance.ViewModel_Name_MergeField;
-
-        /// <summary>
         /// Text to replace with a generic type parameter.
         /// <code>Ex. "{Type parameter}"</code>
         /// </summary>
         static readonly string TypeParameter_MergeField = MergeFieldCatalog.instance.TypeParameter_MergeField;
+
+        /// <summary>
+        /// Text to replace with a ViewModel's name.
+        /// <code>ex. "{ViewModelName}"</code>
+        /// </summary>
+        static readonly string ViewModel_Name_MergeField = MergeFieldCatalog.instance.ViewModel_Name_MergeField;
 
         #endregion Merge fields
 
@@ -309,7 +320,11 @@ namespace Backend
             string constructorString = TemplateSeamster.PrepareTemplate(Constructor_Template);
             TemplateSeamster.MergeFieldsAndValues[Class_Constructor_MergeField] = constructorString;
 
-            string result = TemplateSeamster.PrepareTemplate(Class_Template);
+            string classCodeString = TemplateSeamster.PrepareTemplate(Class_Code_Template);
+            classCodeString = classCodeString.Trim(Environment.NewLine.ToCharArray());
+
+            TemplateSeamster.MergeFieldsAndValues[Class_Code_MergeField] = classCodeString;
+            string result = TemplateSeamster.PrepareTemplate(ViewModel_Contents_Template);
 
             Interop.ExportToNotepad(result);
         }

@@ -1,0 +1,11 @@
+﻿{ViewModel fields}
+
+{ViewModel properties}
+
+{OnChanged EventHandler}
+
+{ICommand declarations}
+
+{ViewModel constructor}
+
+{ICommand methods}
