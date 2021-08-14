@@ -272,15 +272,15 @@ namespace Backend
                     {
                         AddCommand_ActionFunc(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB);
                     }
-                    else if (genericActionCommandRegex.IsMatch(propertyType))
-                    {
-                        string genericType = genericActionCommandRegex.Matches(propertyType)[0].Groups[1].Value;
-                        AddCommand_TAction(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB, genericType);
-                    }
                     else if (genericActionFuncCommandRegex.IsMatch(propertyType))
                     {
                         string genericType = genericActionCommandRegex.Matches(propertyType)[0].Groups[1].Value;
                         AddCommand_TActionFunc(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB, genericType);
+                    }
+                    else if (genericActionCommandRegex.IsMatch(propertyType))
+                    {
+                        string genericType = genericActionCommandRegex.Matches(propertyType)[0].Groups[1].Value;
+                        AddCommand_TAction(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB, genericType);
                     }
                 }
                 else
@@ -305,22 +305,33 @@ namespace Backend
             string iCommandPropDeclarationString = iCommandPropDeclarationSB.ToString();
             string propertyDeclarationsString = propertyDeclarationsSB.ToString();
 
-            fieldDeclarationsString = fieldDeclarationsString.TrimEnd(Environment.NewLine);
-            iCommandInitializationsString = iCommandInitializationsString.TrimEnd(Environment.NewLine);
-            iCommandMethodsString = iCommandMethodsString.TrimEnd(Environment.NewLine).TrimEnd(Environment.NewLine);
-            iCommandPropDeclarationString = iCommandPropDeclarationString.TrimEnd(Environment.NewLine).TrimEnd(Environment.NewLine);
-            propertyDeclarationsString = propertyDeclarationsString.TrimEnd(Environment.NewLine).TrimEnd(Environment.NewLine);
+            fieldDeclarationsString = fieldDeclarationsString.Trim(Environment.NewLine.ToCharArray());
+            iCommandInitializationsString = iCommandInitializationsString.Trim(Environment.NewLine.ToCharArray());
+            iCommandMethodsString = iCommandMethodsString.Trim(Environment.NewLine.ToCharArray());
+            iCommandPropDeclarationString = iCommandPropDeclarationString.Trim(Environment.NewLine.ToCharArray());
+            propertyDeclarationsString = propertyDeclarationsString.Trim(Environment.NewLine.ToCharArray());
 
             TemplateSeamster.MergeFieldsAndValues[Class_Fields_MergeField] = fieldDeclarationsString;
-            TemplateSeamster.MergeFieldsAndValues[Class_ICommand_Initializations_MergeField] = iCommandInitializationsString;
             TemplateSeamster.MergeFieldsAndValues[Class_ICommand_Methods_MergeField] = iCommandMethodsString;
             TemplateSeamster.MergeFieldsAndValues[Class_ICommand_Declarations_MergeField] = iCommandPropDeclarationString;
             TemplateSeamster.MergeFieldsAndValues[Class_Properties_MergeField] = propertyDeclarationsString;
 
-            string constructorString = TemplateSeamster.PrepareTemplate(Constructor_Template);
+            string constructorString;
+            if (!string.IsNullOrWhiteSpace(iCommandInitializationsString))
+            {
+                TemplateSeamster.MergeFieldsAndValues[Class_ICommand_Initializations_MergeField] = iCommandInitializationsString;
+                constructorString = TemplateSeamster.PrepareTemplate(Constructor_Template);
+            }
+            else
+            {
+                constructorString = "";
+            }
+
             TemplateSeamster.MergeFieldsAndValues[Class_Constructor_MergeField] = constructorString;
 
             string classCodeString = TemplateSeamster.PrepareTemplate(Class_Code_Template);
+            Regex emptyNewLinesRegex = new Regex("\r\n\r\n\r\n", RegexOptions.Compiled);
+            classCodeString = emptyNewLinesRegex.Replace(classCodeString, Environment.NewLine);
             classCodeString = classCodeString.Trim(Environment.NewLine.ToCharArray());
 
             TemplateSeamster.MergeFieldsAndValues[Class_Code_MergeField] = classCodeString;
@@ -462,7 +473,7 @@ namespace Backend
         /// <param name="genericType">The type parameter for the generic ICommand.</param>
         static void AddCommand_TAction(StringBuilder iCommandPropDeclarationSB, StringBuilder iCommandInitializationsSB, StringBuilder iCommandMethodsSB, string genericType)
         {
-            string typeParameterMergeField = MergeFieldCatalog.instance.TypeParameter_MergeField;
+            string typeParameterMergeField = TypeParameter_MergeField;
             TemplateSeamster.MergeFieldsAndValues[typeParameterMergeField] = genericType;
 
             // Add a declaration of a generic ICommand property.
@@ -488,7 +499,7 @@ namespace Backend
         /// <param name="genericType">The type parameter for the generic ICommand.</param>
         static void AddCommand_TActionFunc(StringBuilder iCommandPropDeclarationSB, StringBuilder iCommandInitializationsSB, StringBuilder iCommandMethodsSB, string genericType)
         {
-            string typeParameterMergeField = MergeFieldCatalog.instance.TypeParameter_MergeField;
+            string typeParameterMergeField = TypeParameter_MergeField;
             TemplateSeamster.MergeFieldsAndValues[typeParameterMergeField] = genericType;
 
             // Add a declaration of a generic ICommand property.
@@ -496,7 +507,7 @@ namespace Backend
             iCommandPropDeclarationSB.AppendLine(commandPropertyDeclarationString);
 
             // Add initialization for the declared property.
-            string commandInitializationString = TemplateSeamster.PrepareTemplate(ICommand_T_Action_Init_Template);
+            string commandInitializationString = TemplateSeamster.PrepareTemplate(ICommand_T_ActionFuncBool_Init_Template);
             iCommandInitializationsSB.AppendLine(commandInitializationString);
 
             // Add an "OnExecute" method for the generic ICommand.
