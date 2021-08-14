@@ -222,8 +222,8 @@ namespace Backend
             TemplateSeamster.MergeFieldsAndValues[Class_OnPropertyChanged_MergeField] = PropertyChanged_Template;
 
             // Regexes to capture a generic ICommand.
-            Regex genericActionCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)>\(Action<.*>\)", RegexOptions.Compiled);
-            Regex genericActionFuncCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)>\(Action<.*>, Func<.*, bool>\)", RegexOptions.Compiled);
+            Regex genericActionCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)> \(Action<.*>\)", RegexOptions.Compiled);
+            Regex genericActionFuncCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)> \(Action<.*>, Func<.*, bool>\)", RegexOptions.Compiled);
 
             #region StringBuilders initialization
 
@@ -248,13 +248,16 @@ namespace Backend
                 // If the property is an ICommand - build its declaration, initialization and methods.
                 if (propertyType.StartsWith(ICommand_ImplementationType, StringComparison.InvariantCulture))
                 {
+                    if (!propertyName.EndsWith("Command"))
+                        propertyName = propertyName += "Command";
+
                     TemplateSeamster.MergeFieldsAndValues[ICommand_Name_MergeField] = propertyName;
 
-                    if (propertyType == $"{ICommand_ImplementationType}(Action)")
+                    if (propertyType == $"{ICommand_ImplementationType} (Action)")
                     {
                         AddCommand_Action(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB);
                     }
-                    else if (propertyType == $"{ICommand_ImplementationType}(Action, Func<bool>)")
+                    else if (propertyType == $"{ICommand_ImplementationType} (Action, Func<bool>)")
                     {
                         AddCommand_ActionFunc(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB);
                     }
