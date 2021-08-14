@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>Frontend</RootNamespace>
     <DebugType>none</DebugType>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +18,10 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="RD /S /Q $(TargetDir)" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="RD /S /Q $(TargetDir)" />
   </Target>
 
