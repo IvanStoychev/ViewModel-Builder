@@ -21,11 +21,17 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height=".8*"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label Content="ViewModel name" HorizontalAlignment="Center" Grid.Row="0"/>
-            <TextBox Text="{Binding ViewModelName}" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Width="200" Height="20"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="ViewModel name" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+            <TextBox Text="{Binding ViewModelName}" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="1" Width="100" Height="20"/>
+            <Label Content="Namespace" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+            <TextBox Text="{Binding NamespaceName}" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="1" Width="100" Height="20"/>
         </Grid>
         <Grid Grid.Column="1" Grid.Row="0">
             <Grid.RowDefinitions>

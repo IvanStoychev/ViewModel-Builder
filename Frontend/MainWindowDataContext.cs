@@ -12,6 +12,11 @@ namespace Frontend
     class MainWindowDataContext : INotifyPropertyChanged
     {
         /// <summary>
+        /// What to use for the class namespace.
+        /// </summary>
+        public string NamespaceName { get; set; }
+
+        /// <summary>
         /// Name to use for the ViewModel class.
         /// </summary>
         public string ViewModelName { get; set; }
@@ -82,7 +87,7 @@ namespace Frontend
             foreach (AddPropertyControl AddPropertyControl in AddPropertyControlsCollection)
                 propertyNameAndTypeList.Add((AddPropertyControl.tboxPropertyName.Text, AddPropertyControl.cbPropertyType.Text));
 
-            ViewModelBuilder.GenerateViewModelText(propertyNameAndTypeList, ViewModelName);
+            ViewModelBuilder.GenerateViewModelText(propertyNameAndTypeList, ViewModelName, NamespaceName);
         }
 
         /// <summary>

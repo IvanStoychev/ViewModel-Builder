@@ -59,6 +59,12 @@ namespace Backend.Options
         public string Class_Properties_MergeField { get; set; }
 
         /// <summary>
+        /// Text to replace with the name of the namespace of the ViewModel.
+        /// <code>Ex. "{Namespace name}"</code>
+        /// </summary>
+        public string Namespace_Name_MergeField { get; set; }
+
+        /// <summary>
         /// Text to replace with a field type.
         /// <code>Ex. "{Field name}"</code>
         /// </summary>

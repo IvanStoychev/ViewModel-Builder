@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace {NamespaceName}
+namespace {Namespace name}
 {
     class {ViewModel name} : INotifyPropertyChanged
     {

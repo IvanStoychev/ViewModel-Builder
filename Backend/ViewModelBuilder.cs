@@ -166,6 +166,12 @@ namespace Backend
         static readonly string Field_Name_MergeField = MergeFieldCatalog.instance.Field_Name_MergeField;
 
         /// <summary>
+        /// Text to replace with a field's name.
+        /// <code>ex. "{FieldName}"</code>
+        /// </summary>
+        static readonly string Namespace_Name_MergeField = MergeFieldCatalog.instance.Namespace_Name_MergeField;
+
+        /// <summary>
         /// Text to replace with a property's name.
         /// <code>ex. "{PropertyName}"</code>
         /// </summary>
@@ -216,7 +222,7 @@ namespace Backend
         /// <code>ex. "RelayCommand"</code>
         /// </summary>
         static readonly string ICommand_ImplementationType = TypeData.instance.ICommand_ImplementationType;
-        
+
         #endregion ICommand data
 
         /// <summary>
@@ -225,7 +231,8 @@ namespace Backend
         /// </summary>
         /// <param name="propertyNameAndTypeList">A list of property names and their data types.</param>
         /// <param name="viewModelName">What to name the ViewModel class.</param>
-        public static void GenerateViewModelText(List<(string Name, string Type)> propertyNameAndTypeList, string viewModelName)
+        /// <param name="namespaceName">What to name the Namespace of the class.</param>
+        public static void GenerateViewModelText(List<(string Name, string Type)> propertyNameAndTypeList, string viewModelName, string namespaceName)
         {
             // Prepare the specific class used for any ICommand implementations for replacing in any templates.
             TemplateSeamster.MergeFieldsAndValues[ICommand_ImplementationType_MergeField] = ICommand_ImplementationType;
@@ -233,8 +240,10 @@ namespace Backend
             TemplateSeamster.MergeFieldsAndValues[Class_OnPropertyChanged_MergeField] = PropertyChanged_Template;
 
             // Regexes to capture a generic ICommand.
-            Regex genericActionCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)> \(Action<.*>\)", RegexOptions.Compiled);
-            Regex genericActionFuncCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)> \(Action<.*>, Func<.*, bool>\)", RegexOptions.Compiled);
+            Regex actionCommandRegex = new Regex(@$"{ICommand_ImplementationType} *\(Action\)", RegexOptions.Compiled);
+            Regex actionFuncFuncCommandRegex = new Regex(@$"{ICommand_ImplementationType} *\(Action, Func<bool>\)", RegexOptions.Compiled);
+            Regex genericActionCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)> *\(Action<.*>\)", RegexOptions.Compiled);
+            Regex genericActionFuncCommandRegex = new Regex(@$"{ICommand_ImplementationType}<(.*)> *\(Action<.*>, Func<.*, bool>\)", RegexOptions.Compiled);
 
             #region StringBuilders initialization
 
@@ -248,7 +257,8 @@ namespace Backend
 
             viewModelName = ValidateViewModelName(viewModelName);
             TemplateSeamster.MergeFieldsAndValues[ViewModel_Name_MergeField] = viewModelName;
-            
+            TemplateSeamster.MergeFieldsAndValues[Namespace_Name_MergeField] = namespaceName;
+
             // Build all fields and properties (including commands).
             foreach (var property in propertyNameAndTypeList)
             {
@@ -264,11 +274,11 @@ namespace Backend
 
                     TemplateSeamster.MergeFieldsAndValues[ICommand_Name_MergeField] = propertyName;
 
-                    if (propertyType == $"{ICommand_ImplementationType} (Action)")
+                    if (actionCommandRegex.IsMatch(propertyType))
                     {
                         AddCommand_Action(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB);
                     }
-                    else if (propertyType == $"{ICommand_ImplementationType} (Action, Func<bool>)")
+                    else if (actionFuncFuncCommandRegex.IsMatch(propertyType))
                     {
                         AddCommand_ActionFunc(iCommandPropDeclarationSB, iCommandInitializationsSB, iCommandMethodsSB);
                     }
@@ -347,8 +357,10 @@ namespace Backend
         public static void ExtractFromXAML(string xamlText)
         {
             string viewModelName = "";
+            string namespaceName = "";
             string propertyName, propertyType;
             bool gotViewModelName = false;
+            bool gotNamespaceName = false;
             List<(string Name, string Type)> propertyNameAndTypeList = new();
             string commandImplementationType = TypeData.instance.ICommand_ImplementationType;
             string[] splitText = xamlText.Split('<', StringSplitOptions.RemoveEmptyEntries);
@@ -363,6 +375,13 @@ namespace Backend
                     viewModelName = viewModelName.TrimEnd("View");
                     viewModelName += "ViewModel";
                     gotViewModelName = true;
+                }
+
+                if (!gotNamespaceName && line.Contains("Class="))
+                {
+                    namespaceName = line.Substring("Class=\"", "\"");
+                    namespaceName = namespaceName.SubstringStart(".");
+                    gotNamespaceName = true;
                 }
 
                 if (!line.StartsWith("/") && line.Contains("Binding"))
@@ -393,7 +412,7 @@ namespace Backend
                 }
             }
 
-            GenerateViewModelText(propertyNameAndTypeList, viewModelName);
+            GenerateViewModelText(propertyNameAndTypeList, viewModelName, namespaceName);
         }
 
         /// <summary>
