@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="RD /S /Q &quot;$(TargetDir)&quot;" />
+    <Exec Command="RD /S /Q $(TargetDir)" />
   </Target>
 
 </Project>
