@@ -271,18 +271,22 @@ namespace Backend
 
             #endregion StringBuilders initialization
 
-            if (!string.IsNullOrEmpty(viewModelName))
-            {
-                viewModelName = ValidateViewModelName(viewModelName);
-                TemplateSeamster.MergeFieldsAndValues[ViewModel_Name_MergeField] = viewModelName;
-                prepareClass = true;
-            }
-
             if (!string.IsNullOrEmpty(namespaceName))
             {
                 namespaceName = namespaceName.FirstLetterToUpper();
                 TemplateSeamster.MergeFieldsAndValues[Namespace_Name_MergeField] = namespaceName;
                 prepareFullContents = true;
+
+                viewModelName = ValidateViewModelName(viewModelName);
+                TemplateSeamster.MergeFieldsAndValues[ViewModel_Name_MergeField] = viewModelName;
+                prepareClass = true;
+            }
+
+            if (!prepareClass && !string.IsNullOrEmpty(viewModelName))
+            {
+                viewModelName = ValidateViewModelName(viewModelName);
+                TemplateSeamster.MergeFieldsAndValues[ViewModel_Name_MergeField] = viewModelName;
+                prepareClass = true;
             }
 
             // Build all fields and properties (including commands).
