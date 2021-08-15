@@ -107,6 +107,12 @@ namespace Backend.Options
         public string TypeParameter_MergeField { get; set; }
 
         /// <summary>
+        /// Text to replace with the class contents of the viewmodel.
+        /// <code>Ex. "{ViewModel class}"</code>
+        /// </summary>
+        public string ViewModel_Class_MergeField { get; set; }
+
+        /// <summary>
         /// Text to replace with the name of the viewmodel.
         /// <code>Ex. "{ViewModel name}"</code>
         /// </summary>

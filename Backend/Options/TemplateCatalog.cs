@@ -93,8 +93,13 @@ namespace Backend.Options
         public string PropertyChanged_TemplatePath { get; set; }
 
         /// <summary>
+        /// Path to the file containing the template used for the ViewModel class and its contents.
+        /// </summary>
+        public string ViewModel_Class_TemplatePath { get; set; }
+
+        /// <summary>
         /// Path to the file containing the template used for the entire ViewModel file contents.
         /// </summary>
-        public string ViewModel_Contents_TemplatePath { get; set; }
+        public string ViewModel_Full_TemplatePath { get; set; }
     }
 }

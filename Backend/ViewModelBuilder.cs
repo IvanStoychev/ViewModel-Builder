@@ -109,9 +109,14 @@ namespace Backend
         static readonly string PropertyChanged_Template = File.ReadAllText(TemplateCatalog.instance.PropertyChanged_TemplatePath);
 
         /// <summary>
+        /// Template used for the ViewModel class contents.
+        /// </summary>
+        static readonly string ViewModel_Class_Template = File.ReadAllText(TemplateCatalog.instance.ViewModel_Class_TemplatePath);
+
+        /// <summary>
         /// Template used for the entire ViewModel file contents.
         /// </summary>
-        static readonly string ViewModel_Contents_Template = File.ReadAllText(TemplateCatalog.instance.ViewModel_Contents_TemplatePath);
+        static readonly string ViewModel_Full_Template = File.ReadAllText(TemplateCatalog.instance.ViewModel_Full_TemplatePath);
 
         #endregion Templates
 
@@ -190,6 +195,12 @@ namespace Backend
         static readonly string TypeParameter_MergeField = MergeFieldCatalog.instance.TypeParameter_MergeField;
 
         /// <summary>
+        /// Text to replace with a ViewModel's class contents.
+        /// <code>ex. "{ViewModel class}"</code>
+        /// </summary>
+        static readonly string ViewModel_Class_MergeField = MergeFieldCatalog.instance.ViewModel_Class_MergeField;
+
+        /// <summary>
         /// Text to replace with a ViewModel's name.
         /// <code>ex. "{ViewModelName}"</code>
         /// </summary>
@@ -234,10 +245,15 @@ namespace Backend
         /// <param name="namespaceName">What to name the Namespace of the class.</param>
         public static void GenerateViewModelText(List<(string Name, string Type)> propertyNameAndTypeList, string viewModelName, string namespaceName)
         {
+            bool prepareFullContents = false;
+            bool prepareClass = false;
+
             // Prepare the specific class used for any ICommand implementations for replacing in any templates.
             TemplateSeamster.MergeFieldsAndValues[ICommand_ImplementationType_MergeField] = ICommand_ImplementationType;
             // Prepare the "OnChanged" EventHandler for replacing in the template for the ViewModel class.
             TemplateSeamster.MergeFieldsAndValues[Class_OnPropertyChanged_MergeField] = PropertyChanged_Template;
+
+            Regex emptyNewLinesRegex = new Regex("(\r\n){3,}", RegexOptions.Compiled);
 
             // Regexes to capture a generic ICommand.
             Regex actionCommandRegex = new Regex(@$"{ICommand_ImplementationType} *\(Action\)", RegexOptions.Compiled);
@@ -252,16 +268,29 @@ namespace Backend
             StringBuilder iCommandPropDeclarationSB = new();
             StringBuilder iCommandInitializationsSB = new();
             StringBuilder iCommandMethodsSB = new();
-            
+
             #endregion StringBuilders initialization
 
-            viewModelName = ValidateViewModelName(viewModelName);
-            TemplateSeamster.MergeFieldsAndValues[ViewModel_Name_MergeField] = viewModelName;
-            TemplateSeamster.MergeFieldsAndValues[Namespace_Name_MergeField] = namespaceName;
+            if (!string.IsNullOrEmpty(viewModelName))
+            {
+                viewModelName = ValidateViewModelName(viewModelName);
+                TemplateSeamster.MergeFieldsAndValues[ViewModel_Name_MergeField] = viewModelName;
+                prepareClass = true;
+            }
+
+            if (!string.IsNullOrEmpty(namespaceName))
+            {
+                namespaceName = namespaceName.FirstLetterToUpper();
+                TemplateSeamster.MergeFieldsAndValues[Namespace_Name_MergeField] = namespaceName;
+                prepareFullContents = true;
+            }
 
             // Build all fields and properties (including commands).
             foreach (var property in propertyNameAndTypeList)
             {
+                if (string.IsNullOrWhiteSpace(property.Type) || string.IsNullOrWhiteSpace(property.Name))
+                    continue;
+
                 string propertyType = property.Type;
                 string fieldName = property.Name.FirstLetterToLower();
                 string propertyName = property.Name.FirstLetterToUpper();
@@ -340,12 +369,27 @@ namespace Backend
             TemplateSeamster.MergeFieldsAndValues[Class_Constructor_MergeField] = constructorString;
 
             string classCodeString = TemplateSeamster.PrepareTemplate(Class_Code_Template);
-            Regex emptyNewLinesRegex = new Regex("\r\n{3}", RegexOptions.Compiled);
-            classCodeString = emptyNewLinesRegex.Replace(classCodeString, Environment.NewLine);
-            classCodeString = classCodeString.Trim(Environment.NewLine.ToCharArray());
-
             TemplateSeamster.MergeFieldsAndValues[Class_Code_MergeField] = classCodeString;
-            string result = TemplateSeamster.PrepareTemplate(ViewModel_Contents_Template);
+            
+            string viewModelClassString = TemplateSeamster.PrepareTemplate(ViewModel_Class_Template);
+            TemplateSeamster.MergeFieldsAndValues[ViewModel_Class_MergeField] = viewModelClassString;
+
+            string result;
+            if (prepareFullContents)
+            {
+                result = TemplateSeamster.PrepareTemplate(ViewModel_Full_Template);
+            }
+            else if (prepareClass)
+            {
+                result = TemplateSeamster.PrepareTemplate(ViewModel_Class_Template);
+            }
+            else
+            {
+                result = TemplateSeamster.PrepareTemplate(Class_Code_Template);
+            }
+
+            result = emptyNewLinesRegex.Replace(result, Environment.NewLine);
+            result = result.Trim(Environment.NewLine.ToCharArray());
 
             Interop.ExportToNotepad(result);
         }
