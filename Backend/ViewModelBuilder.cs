@@ -340,7 +340,7 @@ namespace Backend
             TemplateSeamster.MergeFieldsAndValues[Class_Constructor_MergeField] = constructorString;
 
             string classCodeString = TemplateSeamster.PrepareTemplate(Class_Code_Template);
-            Regex emptyNewLinesRegex = new Regex("\r\n\r\n\r\n", RegexOptions.Compiled);
+            Regex emptyNewLinesRegex = new Regex("\r\n{3}", RegexOptions.Compiled);
             classCodeString = emptyNewLinesRegex.Replace(classCodeString, Environment.NewLine);
             classCodeString = classCodeString.Trim(Environment.NewLine.ToCharArray());
 
