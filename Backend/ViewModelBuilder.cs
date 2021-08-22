@@ -419,7 +419,7 @@ namespace Backend
                 if (!gotViewModelName && line.Contains("Class="))
                 {
                     viewModelName = line.Substring("Class=\"", "\"");
-                    viewModelName = viewModelName.SubstringEnd(".");
+                    viewModelName = viewModelName.SubstringEndLast(".");
                     viewModelName = viewModelName.TrimEnd("View");
                     viewModelName += "ViewModel";
                     gotViewModelName = true;
