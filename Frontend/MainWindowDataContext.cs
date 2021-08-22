@@ -80,7 +80,7 @@ namespace Frontend
         /// <summary>
         /// Gives the collection of properties and ViewModel name to the backend to generate the MVVM ViewModel.
         /// </summary>
-        private void OnBuildFromProperties()
+        void OnBuildFromProperties()
         {
             List<(string Name, string Type)> propertyNameAndTypeList = new();
 
@@ -93,7 +93,7 @@ namespace Frontend
         /// <summary>
         /// Gives the collection of properties and ViewModel name to the backend to generate the MVVM ViewModel.
         /// </summary>
-        private void OnBuildFromClipboard()
+        void OnBuildFromClipboard()
         {
             string clipboardText = Clipboard.GetText();
             ViewModelBuilder.ExtractFromXAML(clipboardText);
@@ -113,6 +113,18 @@ namespace Frontend
             else if (difference < 0)
                 for (int i = 0; i > difference; i--)
                     OnRemoveProperty();
+        }
+
+        /// <summary>
+        /// Checks whether there is a value entered for a ViewModel name if there is one for namespace.
+        /// </summary>
+        /// <returns><see langword="bool"/> indicating whether ViewModel generation can proceed.</returns>
+        bool ValidateViewModelPresent()
+        {
+            if (!string.IsNullOrEmpty(NamespaceName) && string.IsNullOrWhiteSpace(ViewModelName))
+                return false;
+            else
+                return true;
         }
     }
 }
