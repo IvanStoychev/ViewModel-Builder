@@ -19,7 +19,7 @@ namespace Backend.Options
         /// <summary>
         /// Path to the file containing the template used for the code of the viewmodel's class.
         /// </summary>
-        public string Class_Code_TemplatePath { get; set; }
+        public string Class_Contents_TemplatePath { get; set; }
 
         /// <summary>
         /// Path to the file containing the template used for creating the viewmodel's constructor.
