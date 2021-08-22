@@ -1,4 +1,4 @@
 ﻿class {ViewModel name} : INotifyPropertyChanged
 {
-{Class code}
+{Class contents}
 }

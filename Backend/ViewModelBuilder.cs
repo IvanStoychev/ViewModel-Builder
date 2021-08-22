@@ -23,7 +23,7 @@ namespace Backend
         /// <summary>
         /// Template used for creating the ViewModel's class.
         /// </summary>
-        static readonly string Class_Code_Template = File.ReadAllText(TemplateCatalog.instance.Class_Code_TemplatePath);
+        static readonly string Class_Contents_Template = File.ReadAllText(TemplateCatalog.instance.Class_Contents_TemplatePath);
 
         /// <summary>
         /// Template used for creating the ViewModel's constructor.
@@ -124,9 +124,9 @@ namespace Backend
 
         /// <summary>
         /// Text to replace with the code of the ViewModel's class.
-        /// <code>Ex. "{Class code}"</code>
+        /// <code>Ex. "{Class contents}"</code>
         /// </summary>
-        static readonly string Class_Code_MergeField = MergeFieldCatalog.instance.Class_Code_MergeField;
+        static readonly string Class_Contents_MergeField = MergeFieldCatalog.instance.Class_Contents_MergeField;
 
         /// <summary>
         /// Text to replace with the ViewModel's constructor.
@@ -381,8 +381,8 @@ namespace Backend
             TemplateSeamster.MergeFieldsAndValues[Class_OnPropertyChanged_MergeField] = propertyChangedString;
             TemplateSeamster.MergeFieldsAndValues[Class_Constructor_MergeField] = constructorString;
 
-            string classCodeString = TemplateSeamster.PrepareTemplate(Class_Code_Template);
-            TemplateSeamster.MergeFieldsAndValues[Class_Code_MergeField] = classCodeString;
+            string classCodeString = TemplateSeamster.PrepareTemplate(Class_Contents_Template);
+            TemplateSeamster.MergeFieldsAndValues[Class_Contents_MergeField] = classCodeString;
             
             string viewModelClassString = TemplateSeamster.PrepareTemplate(ViewModel_Class_Template);
             TemplateSeamster.MergeFieldsAndValues[ViewModel_Class_MergeField] = viewModelClassString;
@@ -398,7 +398,7 @@ namespace Backend
             }
             else
             {
-                result = TemplateSeamster.PrepareTemplate(Class_Code_Template);
+                result = TemplateSeamster.PrepareTemplate(Class_Contents_Template);
             }
 
             result = emptyNewLinesRegex.Replace(result, Environment.NewLine);
