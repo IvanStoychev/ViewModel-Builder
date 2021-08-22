@@ -250,8 +250,6 @@ namespace Backend
 
             // Prepare the specific class used for any ICommand implementations for replacing in any templates.
             TemplateSeamster.MergeFieldsAndValues[ICommand_ImplementationType_MergeField] = ICommand_ImplementationType;
-            // Prepare the "OnChanged" EventHandler for replacing in the template for the ViewModel class.
-            TemplateSeamster.MergeFieldsAndValues[Class_OnPropertyChanged_MergeField] = PropertyChanged_Template;
 
             Regex emptyNewLinesRegex = new Regex("(\r\n){3,}", RegexOptions.Compiled);
 
@@ -370,6 +368,17 @@ namespace Backend
                 constructorString = "";
             }
 
+            string propertyChangedString;
+            if (!string.IsNullOrWhiteSpace(propertyDeclarationsString))
+            {
+                propertyChangedString = PropertyChanged_Template;
+            }
+            else
+            {
+                propertyChangedString = "";
+            }
+
+            TemplateSeamster.MergeFieldsAndValues[Class_OnPropertyChanged_MergeField] = propertyChangedString;
             TemplateSeamster.MergeFieldsAndValues[Class_Constructor_MergeField] = constructorString;
 
             string classCodeString = TemplateSeamster.PrepareTemplate(Class_Code_Template);
