@@ -82,6 +82,9 @@ namespace Frontend
         /// </summary>
         void OnBuildFromProperties()
         {
+            if (!Validate())
+                return;
+
             List<(string Name, string Type)> propertyNameAndTypeList = new();
 
             foreach (AddPropertyControl AddPropertyControl in AddPropertyControlsCollection)
@@ -116,6 +119,21 @@ namespace Frontend
         }
 
         /// <summary>
+        /// Runs all validations and displays error messages.
+        /// </summary>
+        /// <returns><see langword="bool"/> indicating whether ViewModel generation can proceed.</returns>
+        bool Validate()
+        {
+            if (!ValidateViewModelPresent())
+            {
+                MessageBox.Show("You must provide a \"ViewModel name\", since you have entered a namespace.");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Checks whether there is a value entered for a ViewModel name if there is one for namespace.
         /// </summary>
         /// <returns><see langword="bool"/> indicating whether ViewModel generation can proceed.</returns>
@@ -123,8 +141,8 @@ namespace Frontend
         {
             if (!string.IsNullOrEmpty(NamespaceName) && string.IsNullOrWhiteSpace(ViewModelName))
                 return false;
-            else
-                return true;
+            
+            return true;
         }
     }
 }
