@@ -439,22 +439,14 @@ namespace Backend
                         propertyName = propertyName.SubstringStart(",");
 
                     string controlType = line.SubstringStart(" ");
-                    switch (controlType)
+
+                    propertyType = controlType switch
                     {
-                        case "TextBox":
-                        case "TextBlock":
-                            propertyType = "string";
-                            break;
-                        case "Button":
-                            propertyType = commandImplementationType + "(Action, Func<bool>)";
-                            break;
-                        case "ItemsControl":
-                            propertyType = "IEnumerable<T>";
-                            break;
-                        default:
-                            propertyType = "unknown";
-                            break;
-                    }
+                        "TextBox" or "TextBlock" => "string",
+                        "Button" => commandImplementationType + "(Action, Func<bool>)",
+                        "ItemsControl" => "IEnumerable<T>",
+                        _ => "unknown",
+                    };
 
                     propertyNameAndTypeList.Add((propertyName, propertyType));
                 }
