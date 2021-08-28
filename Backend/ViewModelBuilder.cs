@@ -437,7 +437,7 @@ namespace Backend
                 if (!gotNamespaceName && line.Contains("Class="))
                 {
                     namespaceName = line.Substring("Class=\"", "\"");
-                    namespaceName = namespaceName.SubstringStart(".");
+                    namespaceName = namespaceName.SubstringStartLast(".");
                     gotNamespaceName = true;
                 }
 
