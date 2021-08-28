@@ -22,12 +22,4 @@
     <ProjectReference Include="..\Backend\Backend.csproj" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="RD /S /Q $(TargetDir)" />
-  </Target>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="RD /S /Q $(TargetDir)" />
-  </Target>
-
 </Project>
