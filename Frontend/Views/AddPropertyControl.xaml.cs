@@ -18,8 +18,9 @@ namespace Frontend.Views
         public static readonly DependencyProperty PropertyTypesProperty =
             DependencyProperty.Register("PropertyTypes", typeof(List<string>), typeof(AddPropertyControl));
 
-        public AddPropertyControl()
+        public AddPropertyControl(List<string> propertyTypes)
         {
+            PropertyTypes = propertyTypes;
             InitializeComponent();
         }
     }

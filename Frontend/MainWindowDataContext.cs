@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Backend;
 using Backend.Options;
 using System.Windows;
+using System.Collections.Specialized;
 
 namespace Frontend
 {
@@ -43,6 +44,7 @@ namespace Frontend
         
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         public RelayCommand AddPropertyCommand { get; }
         public RelayCommand RemovePropertyCommand { get; }
         public RelayCommand BuildFromPropertiesCommand { get; }
@@ -53,19 +55,22 @@ namespace Frontend
             Startup.InitConfig();
             PropertyTypes = TypeData.instance.PropertyTypes;
             AddPropertyControlsCollection = new ObservableCollection<AddPropertyControl>();
+            AddPropertyControlsCollection.CollectionChanged += AddPropertyControlsCollection_CollectionChanged;
             AddPropertyCommand = new RelayCommand(OnAddProperty);
             RemovePropertyCommand = new RelayCommand(OnRemoveProperty);
             BuildFromPropertiesCommand = new RelayCommand(OnBuildFromProperties);
             BuildFromClipboardCommand = new RelayCommand(OnBuildFromClipboard);
         }
 
+        private void AddPropertyControlsCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            => OnPropertyChanged(nameof(PropertiesCount));
+
         /// <summary>
         /// Adds a new <see cref="AddPropertyControl"/> to the AddPropertyControlsCollection.
         /// </summary>
         void OnAddProperty()
         {
-            AddPropertyControlsCollection.Add(new AddPropertyControl() { PropertyTypes = PropertyTypes });
-            OnPropertyChanged("PropertiesCount");
+            AddPropertyControlsCollection.Add(new AddPropertyControl(PropertyTypes));
         }
 
         /// <summary>
@@ -73,8 +78,8 @@ namespace Frontend
         /// </summary>
         void OnRemoveProperty()
         {
-            AddPropertyControlsCollection.RemoveAt(AddPropertyControlsCollection.Count - 1);
-            OnPropertyChanged("PropertiesCount");
+            if (PropertiesCount > 0)
+                AddPropertyControlsCollection.RemoveAt(AddPropertyControlsCollection.Count - 1);
         }
 
         /// <summary>
