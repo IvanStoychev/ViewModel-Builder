@@ -6,7 +6,7 @@
                 if ({Field name} != value)
                 {
                     {Field name} = value;
-                    OnPropertyChanged("{Property name}");
+                    OnPropertyChanged();
                 }
             }
         }
