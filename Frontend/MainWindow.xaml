@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Frontend"
         mc:Ignorable="d"
-        Title="ViewModel Builder" Height="450" Width="600">
+        Title="{Binding MainWindowTitle}" Height="450" Width="600">
     <Window.DataContext>
         <local:MainWindowDataContext/>
     </Window.DataContext>

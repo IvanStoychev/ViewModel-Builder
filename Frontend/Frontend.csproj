@@ -11,6 +11,12 @@
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PlatformTarget>x64</PlatformTarget>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>Ivan Stoychev</Authors>
+    <Product>ViewModel Builder</Product>
+    <PackageId>ViewModel Builder</PackageId>
+    <AssemblyName>ViewModel Builder</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

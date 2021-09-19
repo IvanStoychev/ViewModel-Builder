@@ -1,17 +1,20 @@
-﻿using Frontend.Utility;
+﻿using Backend;
+using Backend.Options;
+using Frontend.Utility;
 using Frontend.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using Backend;
-using Backend.Options;
-using System.Windows;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Reflection;
+using System.Windows;
 
 namespace Frontend
 {
     class MainWindowDataContext : INotifyPropertyChanged
     {
+        public string MainWindowTitle => "ViewModel Builder " + Assembly.GetExecutingAssembly().GetName().Version;
+
         /// <summary>
         /// What to use for the class namespace.
         /// </summary>
